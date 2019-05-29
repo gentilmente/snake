@@ -1,0 +1,98 @@
+<canvas id="gc" width="400" height="400"></canvas>
+<script>
+	window.onload = function() {
+		canvas = document.getElementById("gc");  // espacio donde se da el juego
+		context = canvas.getContext("2d");  //?
+		document.addEventListener("keydown", keyPush);  // evento que al apretar cualquier tecla llama a keyPush()
+		setInterval(game, 1000 / 8);  // cada 1/8 seg se ejecuta el bucle del juego
+	}
+	playerX = playerY = 19;  // coordenadas del jugador
+	gridSize = tileCount = 20;  // tamaño de la grilla y cantidad de azulejos
+	appleX = appleY = 15;  // coordenadas de la manzana
+
+	nextX = nextY = 0;  // coordenadas del próximo azulejo a ocupar
+	trail = [];  //  array de coordenadas que va dejando la cabeza (cuerpo??)
+	tail = 5;  // cola al empezar
+
+	function game() {
+		playerX += nextX;  // cambiar la posición actual por la siguiente
+		playerY += nextY;  // idem
+
+    //  en caso de salirse del canvas, aparecer por el lado contrario
+		if (playerX < 0) {
+			playerX = tileCount - 1;
+		}
+		if (playerX > tileCount - 1) {
+			playerX = 0;
+		}
+		if (playerY < 0) {
+			playerY = tileCount - 1;
+		}
+		if (playerY > tileCount - 1) {
+			playerY = 0;
+		}
+
+		// rellenar de negro el canvas
+		context.fillStyle = "black";
+		context.fillRect(0, 0, canvas.width, canvas.height); //void ctx.fillRect(x, y, width, height);
+
+
+		// rellenar de limón la serpiente
+		context.fillStyle = "lime";
+		for (var i = 0; i < trail.length; i++) {
+			context.fillRect(
+				trail[i].x * gridSize,
+				trail[i].y * gridSize,
+				gridSize - 2,
+				gridSize - 2
+			);
+
+			if (trail[i].x == playerX && trail[i].y == playerY) {
+				tail = 5;
+			}
+		}
+
+		//  actualizar
+		trail.push({
+			x: playerX,
+			y: playerY
+		});
+
+		while (trail.length > tail) {
+			trail.shift();
+		}
+
+		//  si coordenadas de cabeza y manzana coinciden, agrandar cuerpo
+		//  y recolocar nueva manzana
+		if (appleX == playerX && appleY == playerY) {
+			tail++;
+			appleX = Math.floor(Math.random() * tileCount);
+			appleY = Math.floor(Math.random() * tileCount);
+		}
+		//  dibujar manzana
+		context.fillStyle = "red";
+		context.fillRect(appleX * gridSize, appleY * gridSize, gridSize - 2, gridSize - 2);
+	}
+	
+  //  según evento de tecla se cambia la coordenada del próximo azulejo
+	function keyPush(event) {
+		switch(event.keyCode) {
+			case 37:
+				nextX = -1;
+				nextY = 0;
+				break;
+			case 38:
+				nextX = 0;
+				nextY = -1;
+				break;
+			case 39:
+				nextX = 1;
+				nextY = 0;
+				break;
+			case 40:
+				nextX = 0;
+				nextY = 1;
+				break;
+		}
+	}
+</script>
