@@ -1,35 +1,40 @@
+<!DOCTYPE html>
+<meta charset="ISO-8859-1"> 
 <canvas id="gc" width="400" height="400"></canvas>
 <script>
-	window.onload = function() {
-		canvas = document.getElementById("gc");  // espacio donde se da el juego
-		context = canvas.getContext("2d");  //?
-		document.addEventListener("keydown", keyPush);  // evento que al apretar cualquier tecla llama a keyPush()
-		setInterval(game, 1000 / 8);  // cada 1/8 seg se ejecuta el bucle del juego
+	window.onload = function () {
+		canvas = document.getElementById("gc"); // espacio donde se da el juego
+		context = canvas.getContext("2d"); //?
+		document.addEventListener("keydown", keyPush); // evento que al apretar cualquier tecla llama a keyPush()
+		setInterval(game, 1000 / 8); // cada 1/8 seg se ejecuta el bucle del juego
 	}
-	playerX = playerY = 19;  // coordenadas del jugador
-	gridSize = tileCount = 20;  // tamaño de la grilla y cantidad de azulejos
-	appleX = appleY = 15;  // coordenadas de la manzana
+	let apple = {}
+	let player = {}
+	let next = {};
+	player.x = player.y = 19; // coordenadas del jugador
+	gridSize = tileCount = 20; // tamaño de la grilla y cantidad de azulejos
+	apple.x = apple.y = 15; // coordenadas de la manzana
 
-	nextX = nextY = 0;  // coordenadas del próximo azulejo a ocupar
-	trail = [];  //  array de coordenadas que va dejando la cabeza (cuerpo??)
-	tail = 5;  // cola al empezar
+	next.x = next.y = 0; // coordenadas del próximo azulejo a ocupar
+	trail = []; //  array de coordenadas que va dejando la cabeza (cuerpo??)
+	tail = 5; // cola al empezar
 
 	function game() {
-		playerX += nextX;  // cambiar la posición actual por la siguiente
-		playerY += nextY;  // idem
+		player.x += next.x; // cambiar la posición actual por la siguiente
+		player.y += next.y; // idem
 
-    //  en caso de salirse del canvas, aparecer por el lado contrario
-		if (playerX < 0) {
-			playerX = tileCount - 1;
+		//  en caso de salirse del canvas, aparecer por el lado contrario
+		if (player.x < 0) {
+			player.x = tileCount - 1;
 		}
-		if (playerX > tileCount - 1) {
-			playerX = 0;
+		if (player.x > tileCount - 1) {
+			player.x = 0;
 		}
-		if (playerY < 0) {
-			playerY = tileCount - 1;
+		if (player.y < 0) {
+			player.y = tileCount - 1;
 		}
-		if (playerY > tileCount - 1) {
-			playerY = 0;
+		if (player.y > tileCount - 1) {
+			player.y = 0;
 		}
 
 		// rellenar de negro el canvas
@@ -47,15 +52,15 @@
 				gridSize - 2
 			);
 
-			if (trail[i].x == playerX && trail[i].y == playerY) {
+			if (trail[i].x == player.x && trail[i].y == player.y) {
 				tail = 5;
 			}
 		}
 
 		//  actualizar
 		trail.push({
-			x: playerX,
-			y: playerY
+			x: player.x,
+			y: player.y
 		});
 
 		while (trail.length > tail) {
@@ -64,34 +69,34 @@
 
 		//  si coordenadas de cabeza y manzana coinciden, agrandar cuerpo
 		//  y recolocar nueva manzana
-		if (appleX == playerX && appleY == playerY) {
+		if (apple.x == player.x && apple.y == player.y) {
 			tail++;
-			appleX = Math.floor(Math.random() * tileCount);
-			appleY = Math.floor(Math.random() * tileCount);
+			apple.x = Math.floor(Math.random() * tileCount);
+			apple.y = Math.floor(Math.random() * tileCount);
 		}
 		//  dibujar manzana
 		context.fillStyle = "red";
-		context.fillRect(appleX * gridSize, appleY * gridSize, gridSize - 2, gridSize - 2);
+		context.fillRect(apple.x * gridSize, apple.y * gridSize, gridSize - 2, gridSize - 2);
 	}
-	
-  //  según evento de tecla se cambia la coordenada del próximo azulejo
+
+	//  según evento de tecla se cambia la coordenada del próximo azulejo
 	function keyPush(event) {
-		switch(event.keyCode) {
+		switch (event.keyCode) {
 			case 37:
-				nextX = -1;
-				nextY = 0;
+				next.x = -1;
+				next.y = 0;
 				break;
 			case 38:
-				nextX = 0;
-				nextY = -1;
+				next.x = 0;
+				next.y = -1;
 				break;
 			case 39:
-				nextX = 1;
-				nextY = 0;
+				next.x = 1;
+				next.y = 0;
 				break;
 			case 40:
-				nextX = 0;
-				nextY = 1;
+				next.x = 0;
+				next.y = 1;
 				break;
 		}
 	}
