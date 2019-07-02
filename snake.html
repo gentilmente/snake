@@ -2,102 +2,102 @@
 <meta charset="ISO-8859-1"> 
 <canvas id="gc" width="400" height="400"></canvas>
 <script>
-	window.onload = function () {
-		canvas = document.getElementById("gc"); // espacio donde se da el juego
-		context = canvas.getContext("2d"); //?
-		document.addEventListener("keydown", keyPush); // evento que al apretar cualquier tecla llama a keyPush()
-		setInterval(game, 1000 / 8); // cada 1/8 seg se ejecuta el bucle del juego
-	}
-	let apple = {}
-	let player = {}
-	let next = {};
-	player.x = player.y = 19; // coordenadas del jugador
-	gridSize = tileCount = 20; // tamaño de la grilla y cantidad de azulejos
-	apple.x = apple.y = 15; // coordenadas de la manzana
+  window.onload = function () {
+    canvas = document.getElementById("gc"); // espacio donde se da el juego
+    context = canvas.getContext("2d"); //?
+    document.addEventListener("keydown", keyPush); // evento que al apretar cualquier tecla llama a keyPush()
+    setInterval(game, 1000 / 8); // cada 1/8 seg se ejecuta el bucle del juego
+  }
+  let apple = {}
+  let player = {}
+  let next = {};
+  player.x = player.y = 19; // coordenadas del jugador
+  gridSize = tileCount = 20; // tamaño de la grilla y cantidad de azulejos
+  apple.x = apple.y = 15; // coordenadas de la manzana
 
-	next.x = next.y = 0; // coordenadas del próximo azulejo a ocupar
-	trail = []; //  array de coordenadas que va dejando la cabeza (cuerpo??)
-	tail = 5; // cola al empezar
+  next.x = next.y = 0; // coordenadas del próximo azulejo a ocupar
+  trail = []; //  array de coordenadas que va dejando la cabeza (cuerpo??)
+  tail = 5; // cola al empezar
 
-	function game() {
-		player.x += next.x; // cambiar la posición actual por la siguiente
-		player.y += next.y; // idem
+  function game() {
+    player.x += next.x; // cambiar la posición actual por la siguiente
+    player.y += next.y; // idem
 
-		//  en caso de salirse del canvas, aparecer por el lado contrario
-		if (player.x < 0) {
-			player.x = tileCount - 1;
-		}
-		if (player.x > tileCount - 1) {
-			player.x = 0;
-		}
-		if (player.y < 0) {
-			player.y = tileCount - 1;
-		}
-		if (player.y > tileCount - 1) {
-			player.y = 0;
-		}
+    //  en caso de salirse del canvas, aparecer por el lado contrario
+    if (player.x < 0) {
+      player.x = tileCount - 1;
+    }
+    if (player.x > tileCount - 1) {
+      player.x = 0;
+    }
+    if (player.y < 0) {
+      player.y = tileCount - 1;
+    }
+    if (player.y > tileCount - 1) {
+      player.y = 0;
+    }
 
-		// rellenar de negro el canvas
-		context.fillStyle = "black";
-		context.fillRect(0, 0, canvas.width, canvas.height); //void ctx.fillRect(x, y, width, height);
+    // rellenar de negro el canvas
+    context.fillStyle = "black";
+    context.fillRect(0, 0, canvas.width, canvas.height); //void ctx.fillRect(x, y, width, height);
 
 
-		// rellenar de limón la serpiente
-		context.fillStyle = "lime";
-		for (var i = 0; i < trail.length; i++) {
-			context.fillRect(
-				trail[i].x * gridSize,
-				trail[i].y * gridSize,
-				gridSize - 2,
-				gridSize - 2
-			);
+    // rellenar de limón la serpiente
+    context.fillStyle = "lime";
+    for (var i = 0; i < trail.length; i++) {
+      context.fillRect(
+        trail[i].x * gridSize,
+        trail[i].y * gridSize,
+        gridSize - 2,
+        gridSize - 2
+      );
 
-			if (trail[i].x == player.x && trail[i].y == player.y) {
-				tail = 5;
-			}
-		}
+      if (trail[i].x == player.x && trail[i].y == player.y) {
+        tail = 5;
+      }
+    }
 
-		//  actualizar
-		trail.push({
-			x: player.x,
-			y: player.y
-		});
+    //  actualizar
+    trail.push({
+      x: player.x,
+      y: player.y
+    });
 
-		while (trail.length > tail) {
-			trail.shift();
-		}
+    while (trail.length > tail) {
+      trail.shift();
+    }
 
-		//  si coordenadas de cabeza y manzana coinciden, agrandar cuerpo
-		//  y recolocar nueva manzana
-		if (apple.x == player.x && apple.y == player.y) {
-			tail++;
-			apple.x = Math.floor(Math.random() * tileCount);
-			apple.y = Math.floor(Math.random() * tileCount);
-		}
-		//  dibujar manzana
-		context.fillStyle = "red";
-		context.fillRect(apple.x * gridSize, apple.y * gridSize, gridSize - 2, gridSize - 2);
-	}
+    //  si coordenadas de cabeza y manzana coinciden, agrandar cuerpo
+    //  y recolocar nueva manzana
+    if (apple.x == player.x && apple.y == player.y) {
+      tail++;
+      apple.x = Math.floor(Math.random() * tileCount);
+      apple.y = Math.floor(Math.random() * tileCount);
+    }
+    //  dibujar manzana
+    context.fillStyle = "red";
+    context.fillRect(apple.x * gridSize, apple.y * gridSize, gridSize - 2, gridSize - 2);
+  }
 
-	//  según evento de tecla se cambia la coordenada del próximo azulejo
-	function keyPush(event) {
-		switch (event.keyCode) {
-			case 37:
-				next.x = -1;
-				next.y = 0;
-				break;
-			case 38:
-				next.x = 0;
-				next.y = -1;
-				break;
-			case 39:
-				next.x = 1;
-				next.y = 0;
-				break;
-			case 40:
-				next.x = 0;
-				next.y = 1;
-				break;
-		}
-	}
+  //  según evento de tecla se cambia la coordenada del próximo azulejo
+  function keyPush(event) {
+    switch (event.keyCode) {
+      case 37:
+        next.x = -1;
+        next.y = 0;
+        break;
+      case 38:
+        next.x = 0;
+        next.y = -1;
+        break;
+      case 39:
+        next.x = 1;
+        next.y = 0;
+        break;
+      case 40:
+        next.x = 0;
+        next.y = 1;
+        break;
+    }
+  }
 </script>
